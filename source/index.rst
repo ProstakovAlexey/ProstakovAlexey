@@ -14,6 +14,7 @@
 
    ODBC_install.rst
    sert_web
+   notebook_contr
 
 
 Алфавитный указатель и поиск
