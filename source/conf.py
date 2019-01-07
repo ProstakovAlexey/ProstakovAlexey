@@ -47,7 +47,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Заметки'
-copyright = '2018, Prostakov Alexey'
+copyright = '2019, Prostakov Alexey'
 author = 'Prostakov Alexey'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -101,12 +101,6 @@ html_static_path = ['_static']
 #
 # This is required for the alabaster theme
 # refs: http://alabaster.readthedocs.io/en/latest/installation.html#sidebars
-html_sidebars = {
-    '**': [
-        'relations.html',  # needs 'show_related': True theme option to display
-        'searchbox.html',
-    ]
-}
 
 
 # -- Options for HTMLHelp output ------------------------------------------
