@@ -1,0 +1,217 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Машинное обучение для контроля за ноутбуком &#8212; Документация Заметки 1.0.1</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="prev" title="Самоподписанный сертификат для lighttpd" href="sert_web.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Навигация</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Алфавитный указатель"
+             accesskey="I">указатель</a></li>
+        <li class="right" >
+          <a href="sert_web.html" title="Самоподписанный сертификат для lighttpd"
+             accesskey="P">назад</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Документация Заметки 1.0.1</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="id1">
+<h1>Машинное обучение для контроля за ноутбуком<a class="headerlink" href="#id1" title="Ссылка на этот заголовок">¶</a></h1>
+<p>В журнале Linux Format (LXF238) прочитал статью о машинном обучении с использованием Google TensorFlow. Кратко - это библиотека для создания нейросети, в статье говорилось об уже готовой сети, предназначенной для распознавания картинок, приведен пример - распознование цветов (тюльпан, роза и т.д.). Все предполагалось установить на raspberry Pi, и использовать уже готовую сеть, отрезав верхний уровень и переобучив на своем наборе данных (пример цветы и рыбы). Я захотел освоить такую технологию, тем более что сейчас есть время, но какую выбрать идею?</p>
+<p>Я решил завести учет времени, которое семья проводит за компьюером.</p>
+<div class="section" id="id2">
+<h2>Постановка задачи<a class="headerlink" href="#id2" title="Ссылка на этот заголовок">¶</a></h2>
+<p>За компьютером (у меня ноут hp с видеокамерой) могут сидеть: я, жена, ребенок. Так же он может быть просто включен, например для просмотра фильма (на телевизоре) или воспроизведения музыки. Программа должна используя видеокамеру понимать кто сидит за компьютером (может быть что и ни кто) и записывать в БД. Потом по этой БД можно будет строит отчеты.</p>
+<div class="section" id="id3">
+<h3>Требования к БД<a class="headerlink" href="#id3" title="Ссылка на этот заголовок">¶</a></h3>
+<p>БД - sqllite, формат записи:</p>
+<blockquote>
+<div>2019-01-10 12:23:00; Andrey
+2019-01-10 12:24:00; Alexey
+2019-01-10 12:25:00; Natasha
+2019-01-10 12:26:00; None</div></blockquote>
+<p>Запись должна проводится 1 раз в минуту. Тут затруднений не предвидится, переполнение БД маловероятно, но обращу внимание.</p>
+</div>
+<div class="section" id="id4">
+<h3>Требования к распознованию<a class="headerlink" href="#id4" title="Ссылка на этот заголовок">¶</a></h3>
+<dl class="docutils">
+<dt>Необходимо уверенно распозновать:</dt>
+<dd><ol class="first last arabic simple">
+<li>3-х человек: я, жена, сын;</li>
+<li>когда нет никого из них (фактически на заднем плане стена и телевизор сильно боком);</li>
+<li>снимки которые не удалось распознать нужно сохранять в специальную папку, для последующего обучения.</li>
+</ol>
+</dd>
+</dl>
+<p>Я думаю возможны следующие затруднения - различное освещение (стол стоит боком к окну), телевизор на заднем плане.</p>
+</div>
+<div class="section" id="id5">
+<h3>Требования к отчетам<a class="headerlink" href="#id5" title="Ссылка на этот заголовок">¶</a></h3>
+<dl class="docutils">
+<dt>Предполагаю отчеты в виде линейного графика - 4 линии, по оси x - дата/время, по y кол-во проведенных минут (или часов, как пойдет). Следующие графики:</dt>
+<dd><ol class="first last arabic simple">
+<li>За один день (задается)</li>
+<li>За произвольный период (задается).</li>
+</ol>
+</dd>
+</dl>
+<p>Отчет за вчерашний день, неделю и месяц должен отправляться по email.</p>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>Установка и обучение нейросети<a class="headerlink" href="#id6" title="Ссылка на этот заголовок">¶</a></h2>
+<p>В LXF описана работа с готовой сетью, ее я и буду использовать. Устанавливаю в env (что-бы избежать засорения системы многочисленными зависимостями и упростить перенос на другую машину), провожу обучение на фотографиях с камеры, подробности в разделе <a class="reference internal" href="neironet.html#neironet"><span class="std std-ref">Подготовка и обучение нейросети</span></a>.</p>
+</div>
+<div class="section" id="id7">
+<h2>Проверка кто сидит за компьютером<a class="headerlink" href="#id7" title="Ссылка на этот заголовок">¶</a></h2>
+<dl class="docutils">
+<dt>Эта программа состоит из 4-х основных частей:</dt>
+<dd><ol class="first last arabic simple">
+<li>Получение фотографии с камеры.</li>
+<li>Распознование фотографии с помощью нейросети.</li>
+<li>Контроль, проверяющий не пора выходить из-за компьютера.</li>
+<li>Подача сигнала.</li>
+</ol>
+</dd>
+</dl>
+<p>Программа написана на python3 и использует обученную в предыдущем пункте нейросеть, подробное описание в разделе <a class="reference internal" href="recogniz.html#recogniz"><span class="std std-ref">Программа для проверки кто сидит за компьютером</span></a>.</p>
+</div>
+<div class="section" id="id8">
+<h2>Запуск программы<a class="headerlink" href="#id8" title="Ссылка на этот заголовок">¶</a></h2>
+<div class="section" id="id9">
+<h3>Скрипт запуска<a class="headerlink" href="#id9" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Если помните, то я все устанавливал в виртуальное окружение, поэтому запустить программу не так и просто. Нужно запустить интерпритатор python из окружения (он подключит все библиотеки из окружения) и указать ему на программу. Для этого вот такой скрипт run.bash:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="n">cd</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">nata</span><span class="o">/</span><span class="n">control</span>
+<span class="n">env</span><span class="o">-</span><span class="n">tf</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python</span> <span class="n">main</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ubuntu">
+<h3>Запуск из Ubuntu<a class="headerlink" href="#ubuntu" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Программа будет запускаться при входе пользователя в систему, средствами ubuntu. Это даст некоторые преимущества -  не надо писать скрипт, легко настраивать и приложение запускается только один раз. Для запуска нужно:</p>
+<ol class="arabic simple">
+<li>В dash набрать <code class="docutils literal"><span class="pre">запускаемые</span></code> и будут найдены автоматически запускаемые приложения.</li>
+</ol>
+<img alt="Поиск в DASH" class="align-center" src="_images/dash.jpg" />
+<ol class="arabic simple" start="2">
+<li>Там нажать <strong>Добавить</strong> и указать путь к скрипту запуска, указанному выше.</li>
+</ol>
+</div>
+<div class="section" id="id10">
+<h3>Проверка<a class="headerlink" href="#id10" title="Ссылка на этот заголовок">¶</a></h3>
+<p>После запуска проверьте работу скрипта через файл в папке logs. Так будет подробная информация. Я не очень подробно описывал и не предоставил docker образа, вполне возможно что-то упустил. Но приведенные листинги скриптов точно рабочие, если они выдали ошибки - проверяйте права, установленные пакеты, окружение. Когда программа работает нормально, в логфайле нет ошибок, каждую минуту добавляются строки вида:</p>
+<blockquote>
+<div>2019-01-07 18:43:35,503 DEBUG: andrey: 0(10); alexey: 12(20); natasha: 3(20)
+2019-01-07 18:43:39,202 DEBUG: Take photo: tf_files/shoot/2019-01-07 18:43:39.jpg
+2019-01-07 18:43:39,739 DEBUG: About notebook alexey (0.9941233)
+2019-01-07 18:44:35,793 DEBUG: andrey: 0(10); alexey: 13(20); natasha: 1(20)
+2019-01-07 18:44:39,425 DEBUG: Take photo: tf_files/shoot/2019-01-07 18:44:39.jpg
+2019-01-07 18:44:39,896 DEBUG: About notebook alexey (0.99989915)
+2019-01-07 18:45:35,951 DEBUG: andrey: 0(10); alexey: 14(20); natasha: 0(20)
+2019-01-07 18:45:39,647 DEBUG: Take photo: tf_files/shoot/2019-01-07 18:45:39.jpg
+2019-01-07 18:45:40,145 DEBUG: About notebook alexey (0.9999621)</div></blockquote>
+<p>Когда кол-во минут достигнет 20 (в примере для alexey), прозвучит сообщение из файла wav.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Оглавление</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Машинное обучение для контроля за ноутбуком</a><ul>
+<li><a class="reference internal" href="#id2">Постановка задачи</a><ul>
+<li><a class="reference internal" href="#id3">Требования к БД</a></li>
+<li><a class="reference internal" href="#id4">Требования к распознованию</a></li>
+<li><a class="reference internal" href="#id5">Требования к отчетам</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id6">Установка и обучение нейросети</a></li>
+<li><a class="reference internal" href="#id7">Проверка кто сидит за компьютером</a></li>
+<li><a class="reference internal" href="#id8">Запуск программы</a><ul>
+<li><a class="reference internal" href="#id9">Скрипт запуска</a></li>
+<li><a class="reference internal" href="#ubuntu">Запуск из Ubuntu</a></li>
+<li><a class="reference internal" href="#id10">Проверка</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Предыдущий раздел</h4>
+  <p class="topless"><a href="sert_web.html"
+                        title="предыдущая глава">Самоподписанный сертификат для lighttpd</a></p>
+  <div role="note" aria-label="source link">
+    <h3>Эта страница</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/notebook_contr.rst.txt"
+            rel="nofollow">Исходный текст</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Быстрый поиск</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Искать" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Навигация</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Алфавитный указатель"
+             >указатель</a></li>
+        <li class="right" >
+          <a href="sert_web.html" title="Самоподписанный сертификат для lighttpd"
+             >назад</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Документация Заметки 1.0.1</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Prostakov Alexey.
+      Создано с помощью <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+    </div>
+  </body>
+</html>

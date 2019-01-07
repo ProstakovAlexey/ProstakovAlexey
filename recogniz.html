@@ -1,0 +1,336 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Программа для проверки кто сидит за компьютером &#8212; Документация Заметки 1.0.1</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Навигация</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Алфавитный указатель"
+             accesskey="I">указатель</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">Документация Заметки 1.0.1</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="recogniz">
+<span id="id1"></span><h1>Программа для проверки кто сидит за компьютером<a class="headerlink" href="#recogniz" title="Ссылка на этот заголовок">¶</a></h1>
+<div class="section" id="id2">
+<h2>Класс с описание пользователя<a class="headerlink" href="#id2" title="Ссылка на этот заголовок">¶</a></h2>
+<p>Старался писать с применением ООП (но без фанатизма), поэтому содержится только один класс, в файле <strong>user.py</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pygame</span>
+<span class="k">class</span> <span class="nc">User</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for any user</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">sound</span><span class="o">=</span><span class="s1">&#39;audio/alexey.wav&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">limit</span> <span class="o">=</span> <span class="n">limit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sound</span> <span class="o">=</span> <span class="n">sound</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">check_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">limit</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">play</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">pygame</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+        <span class="n">music</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">mixer</span><span class="o">.</span><span class="n">Sound</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sound</span><span class="p">)</span>
+        <span class="n">music</span><span class="o">.</span><span class="n">play</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">sub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">-=</span> <span class="n">other</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="n">other</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">limit</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">limit</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">: </span><span class="si">{1}</span><span class="s1">(</span><span class="si">{2}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">limit</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>Идея класса в том, что у каждого пользователя есть:</dt>
+<dd><ul class="first last simple">
+<li>имя (name);</li>
+<li>ограничение (limit);</li>
+<li>звуковой файл который проигрывается что-бы выгнать его из-за компьютера (sound);</li>
+<li>текущее кол-во минут, которое пользователь провел за компьютером (count).</li>
+</ul>
+</dd>
+<dt>В классе предусмотренны методы для:</dt>
+<dd><ul class="first last simple">
+<li>проверки не превышен ли лимит;</li>
+<li>увеличение кол-ва проведенного времени (предполагается увеличение на 1);</li>
+<li>уменьшение кол-ва проведенного времени (предполагается уменьшение на 2, чтобы быстрее восстанавдивалось);</li>
+<li>не очень важные, вспомоготальные методы.</li>
+</ul>
+</dd>
+</dl>
+<p>Оснобенно хочется отметитить конструкцию для воспроизведения звука, я с ней промучился больше чем с нейросеть. Сначала я хотел воспроизводить проигрывателем mplayer.
+Удивительно, но он работает плохо - если в это время звук уже проигрывается (запущена игра, например) то выдает ошибку - устройство занято. Насколья я понял, это из-за того,
+что он пытается напрямую использовать alsa, но при этом не знает как правильно это сделать. Потом я пробовал другие проигрыватели, в общем выше лучший вариант. Звуковая подсистема в linux ubuntu из коробки к сожалению плохая.</p>
+</div>
+<div class="section" id="id3">
+<h2>Главный модуль<a class="headerlink" href="#id3" title="Ссылка на этот заголовок">¶</a></h2>
+<p>Именно в нем происходит получение снимка, распознование кто за компьютером и подача предупреждающего сигнала:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">import</span> <span class="nn">cv2</span> <span class="c1"># pip install opencv-python</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">user</span>
+
+
+
+<span class="k">def</span> <span class="nf">load_graph</span><span class="p">(</span><span class="n">model_file</span><span class="p">):</span>
+    <span class="n">graph</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+    <span class="n">graph_def</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">GraphDef</span><span class="p">()</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">model_file</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">graph_def</span><span class="o">.</span><span class="n">ParseFromString</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="k">with</span> <span class="n">graph</span><span class="o">.</span><span class="n">as_default</span><span class="p">():</span>
+        <span class="n">tf</span><span class="o">.</span><span class="n">import_graph_def</span><span class="p">(</span><span class="n">graph_def</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">graph</span>
+
+
+<span class="k">def</span> <span class="nf">read_tensor_from_image_file</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">input_height</span><span class="o">=</span><span class="mi">299</span><span class="p">,</span> <span class="n">input_width</span><span class="o">=</span><span class="mi">299</span><span class="p">,</span>
+                                <span class="n">input_mean</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">input_std</span><span class="o">=</span><span class="mi">255</span><span class="p">):</span>
+    <span class="n">input_name</span> <span class="o">=</span> <span class="s2">&quot;file_reader&quot;</span>
+    <span class="n">output_name</span> <span class="o">=</span> <span class="s2">&quot;normalized&quot;</span>
+    <span class="n">file_reader</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">input_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.png&quot;</span><span class="p">):</span>
+        <span class="n">image_reader</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">decode_png</span><span class="p">(</span><span class="n">file_reader</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                                           <span class="n">name</span><span class="o">=</span><span class="s1">&#39;png_reader&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gif&quot;</span><span class="p">):</span>
+        <span class="n">image_reader</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">decode_gif</span><span class="p">(</span><span class="n">file_reader</span><span class="p">,</span>
+                                                      <span class="n">name</span><span class="o">=</span><span class="s1">&#39;gif_reader&#39;</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.bmp&quot;</span><span class="p">):</span>
+        <span class="n">image_reader</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">decode_bmp</span><span class="p">(</span><span class="n">file_reader</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;bmp_reader&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">image_reader</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">decode_jpeg</span><span class="p">(</span><span class="n">file_reader</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                                            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;jpeg_reader&#39;</span><span class="p">)</span>
+    <span class="n">float_caster</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">image_reader</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">dims_expander</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">float_caster</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="n">resized</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">resize_bilinear</span><span class="p">(</span><span class="n">dims_expander</span><span class="p">,</span> <span class="p">[</span><span class="n">input_height</span><span class="p">,</span> <span class="n">input_width</span><span class="p">])</span>
+    <span class="n">normalized</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">resized</span><span class="p">,</span> <span class="p">[</span><span class="n">input_mean</span><span class="p">]),</span> <span class="p">[</span><span class="n">input_std</span><span class="p">])</span>
+    <span class="n">sess</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">normalized</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span> <span class="nf">load_labels</span><span class="p">(</span><span class="n">label_file</span><span class="p">):</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">proto_as_ascii_lines</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">gfile</span><span class="o">.</span><span class="n">GFile</span><span class="p">(</span><span class="n">label_file</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">proto_as_ascii_lines</span><span class="p">:</span>
+        <span class="n">label</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">label</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Initialization</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;logs&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S.log&#39;</span><span class="p">)),</span>
+                        <span class="n">filemode</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
+                        <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> </span><span class="si">%(levelname)s</span><span class="s1">: </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Program is start&#39;</span><span class="p">)</span>
+    <span class="n">errors_dir</span> <span class="o">=</span> <span class="s2">&quot;tf_files/errors&quot;</span>
+    <span class="n">model_file</span> <span class="o">=</span> <span class="s2">&quot;tf_files/retrained_graph.pb&quot;</span>
+    <span class="n">label_file</span> <span class="o">=</span> <span class="s2">&quot;tf_files/retrained_labels.txt&quot;</span>
+    <span class="n">input_height</span> <span class="o">=</span> <span class="mi">224</span>
+    <span class="n">input_width</span> <span class="o">=</span> <span class="mi">224</span>
+    <span class="n">input_mean</span> <span class="o">=</span> <span class="mi">128</span>
+    <span class="n">input_std</span> <span class="o">=</span> <span class="mi">128</span>
+    <span class="n">input_layer</span> <span class="o">=</span> <span class="s2">&quot;input&quot;</span>
+    <span class="n">output_layer</span> <span class="o">=</span> <span class="s2">&quot;final_result&quot;</span>
+    <span class="n">graph</span> <span class="o">=</span> <span class="n">load_graph</span><span class="p">(</span><span class="n">model_file</span><span class="p">)</span>
+    <span class="c1"># Create class for my users</span>
+    <span class="n">users</span> <span class="o">=</span> <span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">User</span><span class="p">(</span><span class="s1">&#39;andrey&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;audio/andrey.wav&#39;</span><span class="p">),</span>
+             <span class="n">user</span><span class="o">.</span><span class="n">User</span><span class="p">(</span><span class="s1">&#39;alexey&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;audio/alexey.wav&#39;</span><span class="p">),</span>
+             <span class="n">user</span><span class="o">.</span><span class="n">User</span><span class="p">(</span><span class="s1">&#39;natasha&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;audio/natasha.wav&#39;</span><span class="p">))</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Initialization completed&#39;</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">log</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">user</span><span class="p">))</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">log</span><span class="p">))</span>
+            <span class="c1"># Get photo from camera</span>
+            <span class="c1"># Camera ON</span>
+            <span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="c1"># Camera need must be hot, else photo will be dark</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">):</span>
+                <span class="n">cap</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="c1"># Take photo</span>
+            <span class="n">ret</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="c1"># Write to file</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S.jpg&#39;</span><span class="p">)</span>
+            <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;tf_files/shoot&#39;</span><span class="p">,</span><span class="n">dt</span><span class="p">)</span>
+            <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
+            <span class="c1"># Camera OFF</span>
+            <span class="n">cap</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Take photo: &#39;</span> <span class="o">+</span> <span class="n">file_name</span><span class="p">)</span>
+            <span class="c1"># End camera work</span>
+
+            <span class="c1"># Tensor flow start</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">read_tensor_from_image_file</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span>
+                                            <span class="n">input_height</span><span class="o">=</span><span class="n">input_height</span><span class="p">,</span>
+                                            <span class="n">input_width</span><span class="o">=</span><span class="n">input_width</span><span class="p">,</span>
+                                            <span class="n">input_mean</span><span class="o">=</span><span class="n">input_mean</span><span class="p">,</span>
+                                            <span class="n">input_std</span><span class="o">=</span><span class="n">input_std</span><span class="p">)</span>
+
+            <span class="n">input_name</span> <span class="o">=</span> <span class="s2">&quot;import/&quot;</span> <span class="o">+</span> <span class="n">input_layer</span>
+            <span class="n">output_name</span> <span class="o">=</span> <span class="s2">&quot;import/&quot;</span> <span class="o">+</span> <span class="n">output_layer</span>
+            <span class="n">input_operation</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">get_operation_by_name</span><span class="p">(</span><span class="n">input_name</span><span class="p">)</span>
+            <span class="n">output_operation</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">get_operation_by_name</span><span class="p">(</span><span class="n">output_name</span><span class="p">)</span>
+
+            <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">Session</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span> <span class="k">as</span> <span class="n">sess</span><span class="p">:</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">output_operation</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                   <span class="p">{</span><span class="n">input_operation</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="n">t</span><span class="p">})</span>
+                <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+            <span class="n">top_k</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">argsort</span><span class="p">()[</span><span class="o">-</span><span class="mi">5</span><span class="p">:][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="n">load_labels</span><span class="p">(</span><span class="n">label_file</span><span class="p">)</span>
+            <span class="n">pl</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">pr</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">top_k</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">results</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">pr</span><span class="p">:</span>
+                    <span class="n">pr</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">pl</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;About notebook </span><span class="si">%s</span><span class="s1"> (</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pl</span><span class="p">,</span> <span class="n">pr</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">pr</span> <span class="o">&gt;</span> <span class="mf">0.7</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span> <span class="o">==</span> <span class="n">pl</span><span class="p">:</span>
+                        <span class="c1"># This is reload operation, don&#39;t change +=</span>
+                        <span class="n">user</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">check_limit</span><span class="p">():</span>
+                            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;For </span><span class="si">{0}</span><span class="s1"> have not time, will be warning&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">user</span><span class="p">))</span>
+                            <span class="n">user</span><span class="o">.</span><span class="n">play</span><span class="p">()</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">user</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;tf_files/errors&#39;</span><span class="p">,</span> <span class="n">dt</span><span class="p">))</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">56</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>У программы есть особенности:</dt>
+<dd><ol class="first last arabic simple">
+<li>Используется ранее обученная модель, без нее не будет работать.</li>
+<li>Не всегда проходит успешное распознование, поэтому она считает, что пользователь за компьютером только если распознал с вероятностью более 0.7. Это минут, т.к. если сидят в двоем, то не срабатывает.</li>
+<li>Программа ведет лог файл.</li>
+<li>Фотографии которые не удалось распознать копируются в папку errors и потом могут быть использованы для тренировки сети.</li>
+<li>Программа выполняется в бесконечном цикле с паузой 56 сек (всего время 1 минута, в основном из-за прогрева камеры).</li>
+</ol>
+</dd>
+<dt>Логика заложена такая:</dt>
+<dd><ol class="first last arabic simple">
+<li>Есть 4-ре образа который может быть распознан - никого нет (none) и 3 пользователя (alexey, natasha, andrey).</li>
+<li>Если удалось распознать (с вероятностью 0.7), то найденному пользователю начисляется 1 минута, у других отнимается 2 минуты (да, восстановление в 2 раза быстрее, чем накопление).</li>
+<li>После каждого начисления проверяется не привышен ли лимит.</li>
+</ol>
+</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Оглавление</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Программа для проверки кто сидит за компьютером</a><ul>
+<li><a class="reference internal" href="#id2">Класс с описание пользователя</a></li>
+<li><a class="reference internal" href="#id3">Главный модуль</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>Эта страница</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/recogniz.rst.txt"
+            rel="nofollow">Исходный текст</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Быстрый поиск</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Искать" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Навигация</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Алфавитный указатель"
+             >указатель</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">Документация Заметки 1.0.1</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Prostakov Alexey.
+      Создано с помощью <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+    </div>
+  </body>
+</html>

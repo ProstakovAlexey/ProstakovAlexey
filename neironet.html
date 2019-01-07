@@ -1,0 +1,208 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Подготовка и обучение нейросети &#8212; Документация Заметки 1.0.1</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Навигация</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Алфавитный указатель"
+             accesskey="I">указатель</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">Документация Заметки 1.0.1</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="neironet">
+<span id="id1"></span><h1>Подготовка и обучение нейросети<a class="headerlink" href="#neironet" title="Ссылка на этот заголовок">¶</a></h1>
+<p>Весь проект буду вести в виртуальном окружении, т.к. наверняка будет море зависимостей. Создаю окружение, перехожу в папку окружения, активирую его <code class="docutils literal"><span class="pre">source</span> <span class="pre">env-tf/bin/activate</span></code>.
+Все дальнейшие действия будут выполнятся в окружении.</p>
+<div class="section" id="id2">
+<h2>Подготовка изображений для обучения сети<a class="headerlink" href="#id2" title="Ссылка на этот заголовок">¶</a></h2>
+<p>Как я понял для работы сети необходимо подготовить большое кол-во изображений, разложенных по папкам в соответствии с объектами которые на них присутствуют.</p>
+<p>Для этого я решил использовать видеокамеру ноута и простой скрипт на python, чтобы делать снимки раз в минуту. Далее эти снимки я вручную разложу по 4-м папкам.</p>
+<p>Скрипт на python:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="c1"># Включаем первую камеру</span>
+<span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="c1"># &quot;Прогреваем&quot; камеру, чтобы снимок не был тёмным</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">):</span>
+    <span class="n">cap</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="c1"># Делаем снимок</span>
+<span class="n">ret</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="c1"># Записываем в файл</span>
+<span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="s1">&#39;/home/alexey/cam/&#39;</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S.jpg&#39;</span><span class="p">),</span> <span class="n">frame</span><span class="p">)</span>
+<span class="c1"># Отключаем камеру</span>
+<span class="n">cap</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Запускается скрипт задание в cron:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">*/</span><span class="mi">1</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="n">python3</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">alexey</span><span class="o">/</span><span class="n">get_cam</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>В результате работы скрипт в папке <code class="docutils literal"><span class="pre">/home/alexey/cam</span></code> собираются снимки с камеры. Предполагаю оставить скрипт в работе на 2-3 дня, а потом вручную рассортировать снимки. В результате я получил 4 папки:</dt>
+<dd><ol class="first last arabic simple">
+<li>alexey - 171 файл, около 17Мб;</li>
+<li>andrey - 151 файл, около 15Мб;</li>
+<li>natasha - 78 файлов, 7.3Мб;</li>
+<li>none - 85 файлов, 8.2Мб.</li>
+</ol>
+</dd>
+</dl>
+</div>
+<div class="section" id="tensorflow">
+<h2>Установка TensorFlow<a class="headerlink" href="#tensorflow" title="Ссылка на этот заголовок">¶</a></h2>
+<dl class="docutils">
+<dt>Моя установка отличается от указанной в статье, т.к. я ставлю на Ubuntu 16.04, а не на raspberry pi. Сделал следующее:</dt>
+<dd><ol class="first last arabic simple">
+<li>Пускаю <code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">tensorflow</span></code>. Если вы не уверены, что нужно делать окружение, то сейчас поймете, что это было верное решение.</li>
+<li>Клонирую репозитарий <code class="docutils literal"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/googlecodelabs/tensorflow-for-poets-2.git</span></code> в нем уже есть необходимые скрипты для создания сети.</li>
+</ol>
+</dd>
+</dl>
+</div>
+<div class="section" id="id3">
+<h2>Создание и обучение сети<a class="headerlink" href="#id3" title="Ссылка на этот заголовок">¶</a></h2>
+<ol class="arabic">
+<li><p class="first">Создаю вот такую структуру в папке «для поэтов»:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ls tensorflow-for-poets-2/tf_files/retraining/
+alexey  andrey  natasha  none
+</pre></div>
+</div>
+</li>
+<li><p class="first">Копирую в папки подготовленные файлы, полученные снимки с камеры.</p>
+</li>
+<li><p class="first">Запускаю обучение сети, все параметры взял из статьи, но оформил в виде скрипта, чтобы исключить ошибки при наборе:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">scripts</span><span class="o">.</span><span class="n">retrain</span>\
+<span class="o">--</span><span class="n">bottleneck_dir</span><span class="o">=</span><span class="n">tf_files</span><span class="o">/</span><span class="n">bottlenecks</span> \
+<span class="o">--</span><span class="n">how_many_training_steps</span><span class="o">=</span><span class="mi">300</span> \
+<span class="o">--</span><span class="n">model_dir</span><span class="o">=</span><span class="n">tf_files</span><span class="o">/</span><span class="n">models</span><span class="o">/</span> \
+<span class="o">--</span><span class="n">summaries_dir</span><span class="o">=</span><span class="n">tf_files</span><span class="o">/</span><span class="n">training_summaries</span><span class="o">/</span><span class="n">mobilenet_1</span><span class="o">.</span><span class="mi">0</span><span class="n">_224</span> \
+<span class="o">--</span><span class="n">output_graph</span><span class="o">=</span><span class="n">tf_files</span><span class="o">/</span><span class="n">retrained_graph</span><span class="o">.</span><span class="n">pb</span> \
+<span class="o">--</span><span class="n">output_labels</span><span class="o">=</span><span class="n">tf_files</span><span class="o">/</span><span class="n">retrained_labels</span><span class="o">.</span><span class="n">txt</span> \
+<span class="o">--</span><span class="n">architecture</span><span class="o">=</span><span class="n">mobilenet_1</span><span class="o">.</span><span class="mi">0</span><span class="n">_224</span> \
+<span class="o">--</span><span class="n">image_dir</span><span class="o">=</span><span class="n">tf_files</span><span class="o">/</span><span class="n">retraining</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>Примерно через минуту обучение закончилось, созданы два файла (они и понадобятся в будущем) retrained_labels.txt - файл меток, retrained_graph.pb - обученная сеть. Можно проверить результат.</p>
+</div>
+<div class="section" id="id4">
+<h2>Распознование<a class="headerlink" href="#id4" title="Ссылка на этот заголовок">¶</a></h2>
+<p>Ну наконец-то подошли к важному. Для проверки работы у поэтов есть скрипт <code class="docutils literal"><span class="pre">label_image.py</span></code>. Для этого я подготовил несколько тестовых файлов. Запуск такой командой:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ python -m scripts.label_image --graph=tf_files/retrained_graph.pb --image=tf_files/tests/alexey/2.jpg
+2019-01-03 17:25:28.054778: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+Evaluation time (1-image): 0.293s
+alexey (score=0.99999)
+andrey (score=0.00001)
+natasha (score=0.00000)
+none (score=0.00000)
+</pre></div>
+</div>
+<p>В общем на хороших кадрах результат отличный. Но не обольщайтесь, это примитивная сеть и до человека ей далеко. Были кадры, где двое одновременно - natasha и andrey. Тут ситуация такая:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>(env-tf) alexey@home:~/python-virtual-environments/tensorflow-for-poets-2$ python -m scripts.label_image --graph=tf_files/retrained_graph.pb --image=tf_files/tests/two/3.jpg
+
+Evaluation time (1-image): 0.284s
+andrey (score=0.81522)
+natasha (score=0.18467)
+alexey (score=0.00012)
+none (score=0.00000)
+
+(env-tf) alexey@home:~/python-virtual-environments/tensorflow-for-poets-2$ python -m scripts.label_image --graph=tf_files/retrained_graph.pb --image=tf_files/tests/two/1.jpg
+
+Evaluation time (1-image): 0.294s
+natasha (score=0.99966)
+alexey (score=0.00033)
+andrey (score=0.00001)
+none (score=0.00000)
+</pre></div>
+</div>
+<p>Общий вывод - что-то получается, годится для опытной эксплуатации.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Оглавление</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Подготовка и обучение нейросети</a><ul>
+<li><a class="reference internal" href="#id2">Подготовка изображений для обучения сети</a></li>
+<li><a class="reference internal" href="#tensorflow">Установка TensorFlow</a></li>
+<li><a class="reference internal" href="#id3">Создание и обучение сети</a></li>
+<li><a class="reference internal" href="#id4">Распознование</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>Эта страница</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/neironet.rst.txt"
+            rel="nofollow">Исходный текст</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Быстрый поиск</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Искать" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Навигация</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Алфавитный указатель"
+             >указатель</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">Документация Заметки 1.0.1</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Prostakov Alexey.
+      Создано с помощью <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+    </div>
+  </body>
+</html>
